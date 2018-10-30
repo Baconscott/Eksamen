@@ -198,7 +198,12 @@ data %>%
   ggplot(aes(AntallIndivid)) + geom_histogram(bins=100) 
 ```
 
-Sett inn tilkning 
+Faecalibacterium er en rekke bakterier som finnes i store mengder i det menneskelige fordøyelsessystemet. Proteinproduksjonen til bakterien har blitt koblet til anti-innflamatoriske effekter i mageregionen 
+
+Bifidobacterium er rekke bakterier som er funnet i munn og svelg hos mennesker. Bakteriene har blitt brukt som en probiotisk faktor i etterbehandlingen av mennesker som har hatt magesår. Bakterien fermenterer melk, og gjør dermed ph-nivået surere. Dette hjelper mot patogener som ellers vil kunne angripe fordøyelsessystemet.
+
+Lachnospiraceae er en familie bakterier som finnes i menneskets magemikrobiota. Bakterien kan hende at beskytter mot tarmkreft, uten at dette er bevist. Det er bevist at bakterien kan gi bakteriefrie mus diabetes.
+
 
 ##3.2.2 Hvilke taxa finnes i mer enn 250 individer?
 ```{r}
@@ -211,4 +216,36 @@ taxa_250 <- data %>%
 
 taxa_250
 ```
+
+##3.2.2 Lag et histogram for hver observasjons-gruppe.
+
+Merk at at noen av historgrammene er tomme. Dette har å gjøre at målingene for unger ikke inkluderer tidsperioden for når moren var gravid. Videre ble mødrene testet når de var gravid og 3 månder etter fødsel. 
+
+```{r}
+data %>%
+  gather(Taxa, AntallBakterier, -(1:3)) %>%
+  group_by(Taxa, Timepoint, MotherChild) %>% 
+  summarise(AntallIndivid = sum(AntallBakterier > 0)) %>% 
+  ggplot(aes(AntallIndivid)) + geom_histogram(bins=10) + facet_grid(rows = vars(MotherChild), cols = vars(Timepoint))
+```
+
+3.2.3
+```{r}
+Null_individer <- data %>%
+  gather(Taxa, AntallBakterier, -(1:3)) %>%
+  group_by(Taxa) %>% 
+  summarise(AntallIndivid = sum(AntallBakterier > 0)) %>% 
+  filter(AntallIndivid == 0)
+  
+  
+count(Null_individer)
+
+
+#Nå har vi fjernet null_individer fra tabellen data med funskjonen under
+data %>% 
+  select(-c(Null_individer$Taxa))
+```
+
+
+
 
