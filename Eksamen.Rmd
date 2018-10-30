@@ -170,3 +170,45 @@ ggplot(Gjennomsnitt.taksa, aes(Timepoint, AntallTaxa, fill = MotherChild)) + geo
 ```
 
 ##3.2 Hvilke taxa er mest vanlige?
+
+Igjen for å besvare spørsmålet i overskriften ska vi først teste funksjonene vå på lekedata sette vårt. 
+```{r}
+AntallIndivid <- leke_data %>%
+  gather(Taxa, AntallBakterier, -(1:3)) %>%
+  group_by(Taxa) %>% 
+  summarise(AntallIndivid = sum(AntallBakterier > 0))
+
+AntallIndivid
+  
+leke_data %>%
+  gather(Taxa, AntallBakterier, -(1:3)) %>%
+  group_by(Taxa) %>% 
+  summarise(AntallIndivid = sum(AntallBakterier > 0)) %>% 
+  ggplot(aes(AntallIndivid)) + geom_histogram()
+```
+
+##3.2.1
+Nå som koden funker skal vi bruke det på hele datasette
+
+```{r}
+data %>%
+  gather(Taxa, AntallBakterier, -(1:3)) %>%
+  group_by(Taxa) %>% 
+  summarise(AntallIndivid = sum(AntallBakterier > 0)) %>% 
+  ggplot(aes(AntallIndivid)) + geom_histogram(bins=100) 
+```
+
+Sett inn tilkning 
+
+##3.2.2 Hvilke taxa finnes i mer enn 250 individer?
+```{r}
+taxa_250 <- data %>%
+  gather(Taxa, AntallBakterier, -(1:3)) %>%
+  group_by(Taxa) %>% 
+  summarise(AntallIndivid = sum(AntallBakterier > 0)) %>% 
+  filter(AntallIndivid > 250) %>% 
+  arrange(desc(AntallIndivid))
+
+taxa_250
+```
+
