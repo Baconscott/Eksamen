@@ -79,3 +79,28 @@ leke_data <- data[c(1:3,26,28,29,190,191,198,493:495,748:750,768,771,772), 1:6]
 View(leke_data)
 ```
 
+##2.2
+
+Tabell 1: gir en oppsumering av kolonne 2:6
+```{r}
+summary(data[,2:6])
+```
+
+Fra tabell en ser vi at vi har følgende:
+
+- Variabler: ```Motherchild```
+- Observasjone: ```Timepoint```
+- Verdier: ```Methanobrevibacter, Clostridiales, Dialister ```
+
+##2.3
+Videre skal vi sortere variablene i kolonnene ```Timepoint``` og ```Motherchild```. Vi ønsker de en en spesiel rekkefølge og den presiserer vi i koden under.
+```{r}
+data$Timepoint <- as.factor(data$Timepoint)
+data$Timepoint <- factor(data$Timepoint, levels = c("Pregnancy", "10days",  "3months", "1year", "2years"))
+
+data$MotherChild <- as.factor(data$MotherChild)
+data$MotherChild <- factor(data$MotherChild, levels = c("mother", "child"))
+
+levels(data$MotherChild)
+levels(data$Timepoint)
+```
