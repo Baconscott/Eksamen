@@ -129,7 +129,21 @@ leke_data %>%
 ```
 
 ```{r}
-GjennomsnittligAntallTaxa <- leke_data %>%
+GjennomsnittligAntallTaxa.lekedata <- leke_data %>%
+  gather(Taxa, AntallBakterier, -(1:3)) %>%
+  group_by(MotherChildPairID, MotherChild, Timepoint) %>% 
+  summarise(AntallTaxa = sum(AntallBakterier > 0)) %>% 
+  group_by(MotherChild, Timepoint) %>% 
+  summarise(GjennomsnittligAntallTaxa = mean(AntallTaxa))
+
+GjennomsnittligAntallTaxa.lekedata
+```
+
+##2.5.1
+
+Nå skal vi gjøre det med hele datasette vårt. Fra det vi får som output kan vi se at antall ulike arter i barn utvider seg over tid og at det er vesentlig mere bakterier i mor enn bar. 
+```{r}
+GjennomsnittligAntallTaxa <- data %>%
   gather(Taxa, AntallBakterier, -(1:3)) %>%
   group_by(MotherChildPairID, MotherChild, Timepoint) %>% 
   summarise(AntallTaxa = sum(AntallBakterier > 0)) %>% 
@@ -139,4 +153,15 @@ GjennomsnittligAntallTaxa <- leke_data %>%
 GjennomsnittligAntallTaxa
 ```
 
+##2.5.2
+```{r}
+library(ggplot2)
 
+Gjennomsnitt.taksa <- data %>%
+  gather(Taxa, AntallBakterier, -(1:3)) %>%
+  group_by(MotherChildPairID, MotherChild, Timepoint) %>% 
+  summarise(AntallTaxa = sum(AntallBakterier > 0))
+
+ggplot(Gjennomsnitt.taksa, aes(Timepoint, AntallTaxa, fill = MotherChild)) + geom_boxplot() + facet_grid(rows =  vars(Gjennomsnitt.taksa$MotherChild), scales = "free", space = "free") + coord_flip()
+
+```
