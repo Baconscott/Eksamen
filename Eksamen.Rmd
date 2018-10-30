@@ -154,6 +154,10 @@ GjennomsnittligAntallTaxa
 ```
 
 ##2.5.2
+
+Etter å ha plottet dataen i et boksplott ser vi nå at  antall ulike typer bakterier for et indevid varierer mer med alderen. 
+
+Figur 1:
 ```{r}
 library(ggplot2)
 
@@ -163,5 +167,6 @@ Gjennomsnitt.taksa <- data %>%
   summarise(AntallTaxa = sum(AntallBakterier > 0))
 
 ggplot(Gjennomsnitt.taksa, aes(Timepoint, AntallTaxa, fill = MotherChild)) + geom_boxplot() + facet_grid(rows =  vars(Gjennomsnitt.taksa$MotherChild), scales = "free", space = "free") + coord_flip()
-
 ```
+
+##3.2 Hvilke taxa er mest vanlige?
