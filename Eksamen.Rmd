@@ -67,8 +67,6 @@ data$MotherChild <- factor(data$MotherChild, levels = c("mother", "child"))
 
 levels(data$MotherChild)
 levels(data$Timepoint)
-
-View(data)
 ```
 
 ##3 La oss telle bakterier
@@ -242,10 +240,79 @@ count(Null_individer)
 
 
 #Nå har vi fjernet null_individer fra tabellen data med funskjonen under
-data %>% 
+data.null <- data %>% 
   select(-c(Null_individer$Taxa))
 ```
 
 
+##4 Kvantitative data - fra telling til multivariat analyse
+##4.1 Normalisering
 
+```{r}
+microCLR <- function(read.counts, n.pseudo=0){
+  depths <- rowSums(read.counts)
+  RC <- read.counts + n.pseudo
+  RRC <- RC/rowSums(RC)
+
+  if(n.pseudo>0){
+    g <- apply(RRC, 1, function(x){mean(log2(x))})
+    X <- log2(RRC) - g
+  } else {
+    X <- RRC
+  }
+  rownames(X) <- rownames(read.counts)
+  colnames(X) <- colnames(read.counts)
+  attr(X, "depths") <- depths
+
+  return(X)
+}
+
+data.norm <- data.null[,-(1:3)]
+  
+  
+data.norm <- microCLR(data.norm, n.pseudo = 1)
+
+data.norm <- bind_cols(MotherChildPairID = data$MotherChildPairID, MotherChild = data$MotherChild, Timepoint = data$Timepoint, data.norm)
+```
+
+
+##4.1.1 Plotting av alle verdiene i data.norm (Noe er feil her, finn ut hva)
+```{r}
+data.norm %>%
+  gather(Taxa, AntallBakterier, -(1:3)) %>%
+  ggplot(aes(AntallBakterier)) + geom_histogram(bins=100)
+
+data.norm$MotherChild <- as.factor(data$MotherChild)
+data.norm$MotherChild <- factor(data.norm$MotherChild, levels = c("mother", "child"))
+
+data.norm$Timepoint <- as.factor(data.norm$Timepoint)
+data.norm$Timepoint <- factor(data.norm$Timepoint, levels = c("Pregnancy", "10days",  "3months", "1year", "2years"))
+```
+
+##4.2 Prinsipal komponent analyse (PCA)
+```{r}
+pca.res <- prcomp(data.norm[,-(1:3)])
+data.pca <- bind_cols(data.norm[,1:3], as.tibble(pca.res$x))
+
+data.pca %>% 
+  ggplot(aes(PC1, PC2, color = MotherChild)) + geom_point()
+```
+
+
+##4.2.1
+```{r}
+data.pca %>% 
+  ggplot(aes(PC1, PC2, color = Timepoint)) + geom_point(aes(shape=MotherChild))  
+```
+
+##4.2.3 Finn de 10 viktigste taxa for prinsipal komponent 1
+```{r}
+loadings <- bind_cols(Taxa=rownames(pca.res$rotation), as.tibble(pca.res$rotation))
+
+loadings %>%
+  select(Taxa, PC1) %>%
+  arrange(desc(abs(PC1)))
+
+#Skriv litt om tre av de: Hva er dette for en bakterie (1-2 setninger) og er det kjent at den finnes i tarmen til #mennesker (1 setning)? Kjenner du igjen noen av bakteriene fra de som fantes i flest individer (flere enn 250 individer #over)? Diskuter.
+```
 
