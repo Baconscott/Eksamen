@@ -104,3 +104,39 @@ data$MotherChild <- factor(data$MotherChild, levels = c("mother", "child"))
 levels(data$MotherChild)
 levels(data$Timepoint)
 ```
+
+
+##2.4 Et tilfeldig utvalg 
+
+Ved å lage en dataramme med tilfeldigge rader fra datasette ```data``` kan vi forbrede oss på å analysere hele datasette. Vi kaller det nye datasette ```leke_data```. En av funksjonene vi ønsker å teste er ```rowSums```. Denne funksjonne kan brukes til å si hvor mange ulike bakterie typer vi finner i hvert enkelt individ. 
+
+Tabell 2: Viser en dataramme med tilfeldigge rader og kolonne 1 til 6.
+```{r}
+leke_data <- data[c(1:3,26,28,29,190,191,198,493:495,748:750,768,771,772), 1:6]
+leke_data
+
+rowSums(leke_data[,-(1:3)] > 0)
+```
+
+##2.5 beregne gjenomsnittlig antall taxa som finnes i observasjons-gruppene
+Videre ønsker vi å regne ut gjennomsnittet for mor og barn ved ulike tidspunkter for å se hvordan bakteriefloraen er forskjellig hos mor og barn og hvordan den endrer seg over tid. 
+
+Første steget vår blir å forekle data vå litt. Vi slår sammen kolonne 4,5, og 6. Vi fordeler de på kolonnene Taxa og AntallBakterier. Dermed har vi samlet taxon-variablene våres i to nye variabler. Dette vil gjøre videre undersøkelser enklere. 
+
+```{r}
+leke_data %>%
+  gather(Taxa, AntallBakterier, -(1:3))
+```
+
+```{r}
+GjennomsnittligAntallTaxa <- leke_data %>%
+  gather(Taxa, AntallBakterier, -(1:3)) %>%
+  group_by(MotherChildPairID, MotherChild, Timepoint) %>% 
+  summarise(AntallTaxa = sum(AntallBakterier > 0)) %>% 
+  group_by(MotherChild, Timepoint) %>% 
+  summarise(GjennomsnittligAntallTaxa = mean(AntallTaxa))
+
+GjennomsnittligAntallTaxa
+```
+
+
