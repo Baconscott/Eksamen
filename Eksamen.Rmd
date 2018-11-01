@@ -367,7 +367,7 @@ farger <- gg_farger[data.norm$Timepoint]
 
 library(gplots)
 
-heatmap.2(x = data.norm.matrix.log.scaled, 
+heatmap.2(x = data.norm.matrix, 
           Rowv = as.dendrogram(dist.obs.tre),
           Colv = as.dendrogram(dist.var.tre),
           trace = "none",
@@ -376,9 +376,11 @@ heatmap.2(x = data.norm.matrix.log.scaled,
           srtCol = 45,
           cexRow = 0.5,
           margins = c(7,3),
+          labRow = "",
+          labCol = "",
           RowSideColors = farger)
 
-egend(x = -0.1, y = 0.85, xpd = TRUE,
+legend(x = -0.1, y = 0.85, xpd = TRUE,
        legend = levels(data.norm$Timepoint),
        col = gg_farger,
        pch = 15,
