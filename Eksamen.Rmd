@@ -346,6 +346,7 @@ ggplot(data.frame(PC = 1:length(var.forklart), VariansForklart = cumsum(var.fork
 ```
 
 ##4.3 Heatmap beregnet med distanse
+<<<<<<< HEAD
 
 ```{r}
 #Distanse, dataen vårer allerede blitt logtransformert og skalert tidligere. 
@@ -368,6 +369,23 @@ farger <- gg_farger[data.norm$Timepoint]
 library(gplots)
 
 heatmap.2(x = data.norm.matrix, 
+=======
+```{r}
+data.norm.matrix <- as.matrix(data.norm[,-(1:3)])
+data.norm.matrix.log <- log(data.norm.matrix + 1)
+data.norm.matrix.log.scaled <- scale(data.norm.matrix.log, center = TRUE, scale = TRUE) 
+
+dist.var <- dist(t(data.norm.matrix.log.scaled)) 
+dist.var.tre <- hclust(dist.var)  
+plot(dist.var.tre) 
+
+dist.obs <- dist(data.norm.matrix.log.scaled)
+dist.obs.tre <- hclust(dist.obs)
+plot(dist.obs.tre)
+
+library(gplots)
+
+heatmap.2(x = data.norm.matrix.log.scaled, 
           Rowv = as.dendrogram(dist.obs.tre),
           Colv = as.dendrogram(dist.var.tre),
           trace = "none",
@@ -375,6 +393,42 @@ heatmap.2(x = data.norm.matrix,
           cexCol = 1,
           srtCol = 45,
           cexRow = 0.5,
+          margins = c(7,3))
+```
+
+##4.3 Heatmap beregnet med distanse
+```{r}
+
+```
+
+##Prøvefelt for heatmap
+```{r}
+#Distanse
+
+data.norm <- data.norm[1:10,1:13]
+data.norm.matrix <- as.matrix(data.norm[,-(1:3)]) 
+data.norm.matrix.log.scaled <- scale(data.norm.matrix, center = TRUE, scale = TRUE) 
+
+dist.var <- dist(t(data.norm.matrix.log.scaled)) 
+dist.var.tre <- hclust(dist.var)  
+plot(dist.var.tre) 
+
+dist.obs <- dist(data.norm.matrix.log.scaled)
+dist.obs.tre <- hclust(dist.obs)
+plot(dist.obs.tre)
+
+library(gplots)
+
+heatmap.2(x = data.norm.matrix.log.scaled, 
+>>>>>>> 37555382b5b5ed76625532e721b47416b662969b
+          Rowv = as.dendrogram(dist.obs.tre),
+          Colv = as.dendrogram(dist.var.tre),
+          trace = "none",
+          col = colorRampPalette(c("blue","white","red")),
+          cexCol = 1,
+          srtCol = 45,
+          cexRow = 0.5,
+<<<<<<< HEAD
           margins = c(7,3), 
           labRow = "",
           labCol = "",
@@ -388,5 +442,9 @@ legend(x = -0.1, y = 0.85, xpd = TRUE,
        cex = 1,
        bty = "n" 
     )
+=======
+          margins = c(7,3))
+
+>>>>>>> 37555382b5b5ed76625532e721b47416b662969b
 ```
 
