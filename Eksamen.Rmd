@@ -345,9 +345,9 @@ ggplot(data.frame(PC = 1:length(var.forklart), VariansForklart = cumsum(var.fork
 # Hvordan tolker du dette?
 ```
 
+
 ##4.3 heatmap
 ```{r}
-#Distanse
 #Distanse, dataen vårer allerede blitt logtransformert og skalert tidligere. 
 data.norm.matrix <- (as.matrix(data.norm[,-(1:3)])) 
 
@@ -367,7 +367,7 @@ farger <- gg_farger[data.norm$Timepoint]
 
 library(gplots)
 
-heatmap.2(x = data.norm.matrix,
+heatmap.2(x = data.norm.matrix.log.scaled, 
           Rowv = as.dendrogram(dist.obs.tre),
           Colv = as.dendrogram(dist.var.tre),
           trace = "none",
@@ -375,13 +375,10 @@ heatmap.2(x = data.norm.matrix,
           cexCol = 1,
           srtCol = 45,
           cexRow = 0.5,
-          margins = c(7,3), 
-          labRow = "",
-          labCol = "",
-          RowSideColors = farger
-          )
+          margins = c(7,3),
+          RowSideColors = farger)
 
-legend(x = -0.1, y = 0.85, xpd = TRUE,
+egend(x = -0.1, y = 0.85, xpd = TRUE,
        legend = levels(data.norm$Timepoint),
        col = gg_farger,
        pch = 15,
@@ -389,4 +386,3 @@ legend(x = -0.1, y = 0.85, xpd = TRUE,
        bty = "n" 
     )
 ```
-
